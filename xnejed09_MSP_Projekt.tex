@@ -1,0 +1,583 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[left=0.2cm, text={20.6cm, 24cm}, top=3cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[czech]{babel}
+\usepackage{array}
+\usepackage{enumerate}
+\usepackage{amsthm}
+\usepackage{amsmath}
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\newtheoremstyle{result}{}{}{}{}{\bfseries}{:}{ }{\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}
+
+\theoremstyle{result}
+\newtheorem*{result}{Řešení}
+\newtheorem{task}{Úkol}
+
+\makeatletter
+\renewcommand\maketitle{
+{\raggedright % Note the extra {
+\begin{center}
+{\Large \bfseries \@title }\\[2ex]
+{\@author}\\[8ex] 
+\end{center}}} % Note the extra }
+\makeatother
+
+\title{Statistika a pravděpodobnost (MSP) – 2022/2023\\[1ex] Projekt}
+\author{Domink Nejedlý (xnejed09)}
+
+\begin{document}
+
+\maketitle
+
+\begin{task}
+    Český stát objednal průzkum, jak lidé vnímají střídání zimního a letního času. Průzkum zahrnoval větší města (Praha, Brno), menší města (Znojmo, Tišnov) a obce (Paseky, Horní Lomná, Dolní Věstonice). V průzkumu zjišťovali, co lidem lépe vyhovuje – zda střídání letního a zimního času, pouze zimní čas nebo pouze letní čas. Odpovědi respondentů vidíte v tabulce:
+    
+    \begin{center}
+        \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}| }
+            \hline
+            & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{Okolí studenta} \\
+            \hline
+            \textbf{počet respondentů} & \textbf{1327} & \textbf{915} & \textbf{681} & \textbf{587} & \textbf{284} & \textbf{176} & \textbf{215} & \textbf{71} \\
+            \hline
+            \textbf{zimní čas} & 510 & 324 & 302 & 257 & 147 & 66 & 87 & 21 \\
+            \hline
+            \textbf{letní čas} & 352 & 284 & 185 & 178 & 87 & 58 & 65 & 25 \\
+            \hline
+            \textbf{střídání časů} & 257 & 178 & 124 & 78 & 44 & 33 & 31 & 8 \\
+            \hline
+            \textbf{nemá názor} & 208 & 129 & 70 & 74 & 6 & 19 & 32 & 17 \\
+            \hline
+        \end{tabular}
+    \end{center}
+    Na hladině významnosti $\alpha = 0,05$ ($\alpha = 0,05$ je celková chyba 1. druhu pro \ref{1a}) až \ref{1e})) prověřte hypotézy:
+    
+    \begin{enumerate}[a)]
+        \item V městech, obcích a v okolí studenta (8 průzkumů) je stejné procentuální zastoupení obyvatel, co preferují zimní čas. \label{1a}
+
+        \begin{result}
+            K ověřování využijeme test dobré shody pro Multinomické rozdělení resp. chí-kvadrát test v kontingenčních tabulkách (přednáška 13 sekce Kategoriální analýza -- Test dobré shody) (v tomto případě lze použít označení chí-kvadrát test homogenity, jelikož tento porovnává rozložení diskrétních veličin ve dvou či více populacích, přičemž testuje zda se napříč nimi tato rozložení neliší -- pouze jiný způsob uvažování o chí-kvadrát testu nezávislosti, výpočet je však stejný). Mějme následující kontingenční tabulku, která vznikla z~tabulky v~zadání sloučením řádků \textit{letní čas}, \textit{střídání časů} a~\textit{nemá názor}:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}|c| }
+                    \hline
+                    & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{okolí studenta} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{zimní čas} & 510 & 324 & 302 & 257 & 147 & 66 & 87 & 21 & \textbf{1714} \\
+                    \hline
+                    \textbf{ostatní} & 817 & 591 & 379 & 330 & 137 & 110 & 128 & 50 & \textbf{2542} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{1327} & \textbf{915} & \textbf{681} & \textbf{587} & \textbf{284} & \textbf{176} & \textbf{215} & \textbf{71} & \boldmath$n_{\bullet, \bullet} = 4256$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Zjevně
+            $$n_{i, \bullet} = \sum_{j=1}^{c} n_{i, j}\text{, }n_{\bullet, j} = \sum_{i=1}^{r} n_{i, j}\text{ a } n = n_{\bullet, \bullet} = \sum_{i=1}^{r} \sum_{j=1}^{c} n_{i, j},$$
+            kde $r$ značí počet řádků a $c$ počet sloupců tabulky (bez řádku $n_{\bullet, j}$ a sloupce $n_{i, \bullet}$).
+
+            Ověřujeme $H_0: \forall i, j: p_{i, j} = p_{i, \bullet} \cdot p_{\bullet, j}$ proti $H_A: \exists i, j: p_{i, j} \neq p_{i, \bullet} \cdot p_{\bullet, j}$, kde $p_{i, \bullet} = \frac{n_{i, \bullet}}{n}$ a $p_{\bullet, j} = \frac{n_{\bullet, j}}{n}$
+
+            Alternativně lze v tomto případě uvažovat $H_0: \forall i, j: p_{\textit{zimní čas}, i} = p_{\textit{zimní čas}, j}$ proti $H_A: \exists i, j: p_{\textit{zimní čas}, i} \neq p_{\textit{zimní čas}, j}$, kde $i$ a $j$ představují oblasti, kde bylo prováděno pozorování (tedy sloupce tabulky bez $n_{i, \bullet}$).
+
+            Spočtěme teoretické četnosti pomocí vzorce $n_{i, j} \overset{\textit{odhad}}= \frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n}; \forall i,j$:
+
+             \begin{center}
+                \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}| }
+                    \hline
+                    & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{okolí studenta} \\
+                    \hline
+                    \textbf{zimní čas} & 534.4168 & 368.4939 & 274.2561 & 236.3999 & 114.3741 & 70.8797 & 86.5860 & 28.5935 \\
+                    \hline
+                    \textbf{ostatní} & 792.5832 & 546.5061 & 406.7439 & 350.6001 & 169.6259 & 105.1203 & 128.4140 & 42.4065 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Vidíme, že získané hodnoty splňují podmínku $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$. Není tedy nutné slučovat sloupce (řádky v tomhle případě slučovat nelze, jelikož jejich minimální vyžadovaný počet je 2, což platí i pro sloupce -- pro čtyřpolní tabulku by se pak postupovalo dle speciálních metod (Yatesova korekce, Fischerův exaktní test)) a můžeme tedy pokračovat výpočtem testovacího kritéria:
+            $$t = \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{(n_{i, j} - \frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n})^2}{\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n}} = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 38.0913$$
+
+            Určíme doplněk kritického oboru ($k = (r - 1)\cdot(c - 1)$ je počet stupňů volnosti):
+            \begin{align*}
+                \overline{W}_\alpha &= \langle 0, \chi_{1 - \alpha}^2(k) \rangle = \langle 0, \chi_{1 - \alpha}^2((2 - 1)\cdot(8 - 1)) \rangle = \langle 0, \chi_{1 - \alpha}^2(7) \rangle = \langle 0, \chi_{1 - \alpha}^2(7) \rangle = \langle 0, \chi_{1 - \alpha}^2(7) \rangle \\
+                \overline{W}_{0.05} &= \langle 0, \chi_{0.95}^2(7) \rangle = \langle 0, 14.067 \rangle
+            \end{align*}
+
+            Jelikož $t \notin \overline{W}_{0.05}$, $H_0$ se \textbf{zamítá}. V městech, obcích a v okolí studenta tedy dle testu stejné procentuální zastoupení lidí, co preferují zimní čas, není.
+        \end{result}
+        
+        \item V městech, obcích a v okolí studenta (8 průzkumů) je stejné procentuální zastoupení obyvatel, co preferují letní čas.
+
+        \begin{result}
+            Postupujeme analogicky jako v bodě \ref{1a}), pouze vyměníme \textit{zimní čas} za \textit{letní čas}. Získáme tedy následující tabulku:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}|c| }
+                    \hline
+                    & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{okolí studenta} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{letní čas} & 352 & 284 & 185 & 178 & 87 & 58 & 65 & 25 & \textbf{1234} \\
+                    \hline
+                    \textbf{ostatní} & 975 & 631 & 496 & 409 & 197 & 118 & 150 & 46 & \textbf{3022} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{1327} & \textbf{915} & \textbf{681} & \textbf{587} & \textbf{284} & \textbf{176} & \textbf{215} & \textbf{71} & \boldmath$n_{\bullet, \bullet} = 4256$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Ověřujeme $H_0: \forall i, j: p_{i, j} = p_{i, \bullet} \cdot p_{\bullet, j}$ proti $H_A: \exists i, j: p_{i, j} \neq p_{i, \bullet} \cdot p_{\bullet, j}$, kde $p_{i, \bullet} = \frac{n_{i, \bullet}}{n}$ a $p_{\bullet, j} = \frac{n_{\bullet, j}}{n}$
+    
+            Alternativně lze opět uvažovat $H_0: \forall i, j: p_{\textit{letní čas}, i} = p_{\textit{letní čas}, j}$ proti $H_A: \exists i, j: p_{\textit{letní čas}, i} \neq p_{\textit{letní čas}, j}$, kde $i$ a $j$ představují oblasti, kde bylo prováděno pozorování (tedy sloupce tabulky bez $n_{i, \bullet}$).
+    
+            Spočtěme teoretické četnosti dle vzorce $n_{i, j} \overset{\textit{odhad}}= \frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n}; \forall i,j$:
+    
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}| }
+                    \hline
+                    & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{okolí studenta} \\
+                    \hline
+                    \textbf{letní čas} & 384.7552 & 265.2984 & 197.4516 & 170.1969 & 82.3440 & 51.0301 & 62.3379 & 20.5860 \\
+                    \hline
+                    \textbf{ostatní} & 942.2448 & 649.7016 & 483.5484 & 416.8031 & 201.6560 & 124.9699 & 152.6621 & 50.4140 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+    
+            Opět všechny získané hodnoty splňují podmínku $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$. Pokračujme tedy výpočtem testovacího kritéria:
+            $$t = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 10.5980$$
+    
+            Doplněk kritického oboru je pak stejný jako v bodě \ref{1a}), tedy:
+            $$\overline{W}_{0.05} = \langle 0, \chi_{0.95}^2(7) \rangle = \langle 0, 14.067 \rangle$$
+    
+            V tomto případě $t \in \overline{W}_{0.05}$, a proto se $H_0$ \textbf{nezamítá}. V městech, obcích a v okolí studenta je tedy dle testu stejné procentuální zastoupení obyvatel, co preferují letní čas.
+        \end{result}
+    
+        \item V městech, obcích a v okolí studenta (8 průzkumů) je stejné procentuální zastoupení obyvatel, co preferují střídání časů.
+
+        \begin{result}
+            Opět postupujeme stejně jako v bodě \ref{1a}), tentokrát však vyměníme \textit{zimní čas} za \textit{střídání časů}. Upravená tabulka naměřených četností tedy vypadá následovně:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}|c| }
+                    \hline
+                    & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{okolí studenta} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{střídání č.} & 257 & 178 & 124 & 78 & 44 & 33 & 31 & 8 & \textbf{753} \\
+                    \hline
+                    \textbf{ostatní} & 1070 & 737 & 557 & 509 & 240 & 143 & 184 & 63 & \textbf{3503} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{1327} & \textbf{915} & \textbf{681} & \textbf{587} & \textbf{284} & \textbf{176} & \textbf{215} & \textbf{71} & \boldmath$n_{\bullet, \bullet} = 4256$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+        \end{result}
+
+        $H_0$ a $H_A$ zůstávají shodné jako v předcházejících bodech (viz bod \ref{1a})), přičemž mohou být opět formulovány jako $H_0: \forall i, j: p_{\textit{střídání časů}, i} = p_{\textit{střídání časů}, j}$ proti $H_A: \exists i, j: p_{\textit{střídání časů}, i} \neq p_{\textit{střídání časů}, j}$, kde $i$ a $j$ představují oblasti, kde bylo prováděno pozorování (tedy sloupce tabulky bez $n_{i, \bullet}$).
+
+        Teoretické četnosti jsou pak následující:
+
+         \begin{center}
+            \begin{tabular}{ |l|c|c|c|c|c|M{1.5cm}|M{1.9cm}|M{1.8cm}| }
+                \hline
+                & \textbf{Praha} & \textbf{Brno} & \textbf{Znojmo} & \textbf{Tišnov} & \textbf{Paseky} & \textbf{Horní Lomná} & \textbf{Dolní Věstonice} & \textbf{okolí studenta} \\
+                \hline
+                \textbf{střídání časů} & 234.7817 & 161.8879 & 120.4871 & 103.8560 & 50.2472 & 31.1391 & 38.0392 & 12.5618 \\
+                \hline
+                \textbf{ostatní} & 1092.2183 & 753.1121 & 560.5129 & 483.1440 & 233.7528 & 144.8609 & 176.9608 & 58.4382 \\
+                \hline
+            \end{tabular}
+        \end{center}
+
+        Všechny získané hodnoty splňují podmínku $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$. Přejděme tedy k výpočtu testovacího kritéria:
+        $$t = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 17.1222$$
+
+        Doplněk kritického oboru zůstává stejný jako v předcházejících bodech (viz bod \ref{1a})), tedy:
+        $$\overline{W}_{0.05} = \langle 0, \chi_{0.95}^2(7) \rangle = \langle 0, 14.067 \rangle$$
+
+        Vidíme, že $t \notin \overline{W}_{0.05}$, $H_0$ se proto \textbf{zamítá}. V městech, obcích a v okolí studenta tedy dle testu stejné procentuální zastoupení lidí, co preferují střídání časů, není.
+        
+        \item U větších měst, menších měst a obcí (3 průzkumy) je stejné procentuální zastoupení obyvatel, co preferují zimní čas. \label{1d}
+
+        \begin{result}
+            Zde postupujme opět obdobně jako v bodě \ref{1a}), ovšem kromě sloučení řádků aplikujme rovněž sloučení sloupců do skupin podle velikosti pozorovaných oblastí (viz zadání), přičemž sloupec \textit{okolí studenta} úplně vyloučíme. Tímto způsobem získáme následující tabulku:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c|c| }
+                    \hline
+                    & \textbf{větší města} & \textbf{menší města} & \textbf{obce} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{zimní čas} & 834 & 559 & 300 & \textbf{1693} \\
+                    \hline
+                    \textbf{ostatní} & 1408 & 709 & 375 & \textbf{2492} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{2242} & \textbf{1268} & \textbf{675} & \boldmath$n_{\bullet, \bullet} = 4185$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            V obecné rovině ověřujeme opět $H_0: \forall i, j: p_{i, j} = p_{i, \bullet} \cdot p_{\bullet, j}$ proti $H_A: \exists i, j: p_{i, j} \neq p_{i, \bullet} \cdot p_{\bullet, j}$, kde $p_{i, \bullet} = \frac{n_{i, \bullet}}{n}$ a $p_{\bullet, j} = \frac{n_{\bullet, j}}{n}$.
+    
+            Alternativně lze pak $H_0$ a $H_A$ opět chápat jako:
+            \begin{align*}
+                &H_0: p_{\textit{zimní čas}, \textit{větší města}} = p_{\textit{zimní čas}, \textit{menší města}} = p_{\textit{zimní čas}, \textit{obce}} \\
+                &H_A: \exists i, j: p_{\textit{zimní čas}, i} \neq p_{\textit{zimní čas}, j}, \text{kde } i,j \in \{\textit{větší města, menší města, obce}\}
+            \end{align*}
+
+            Nyní opět standardním způsobem (viz bod \ref{1a})) získejme teoretické četnosti:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c| }
+                    \hline
+                    & \textbf{větší města} & \textbf{menší města} & \textbf{obce} \\
+                    \hline
+                    \textbf{zimní čas} & 906.9787 & 512.9568 & 273.0645 \\
+                    \hline
+                    \textbf{ostatní} & 1335.0213 & 755.0432 & 401.9355 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Vzhledem k tomu, že všechny získané hodnoty splňují podmínku $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$, spočtěme dále testovací kritérium:
+            $$t = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 21.2641$$
+
+            Určeme dále doplněk kritického oboru ($k = (r - 1)\cdot(c - 1)$ je počet stupňů volnosti):
+            \begin{align*}
+                \overline{W}_\alpha &= \langle 0, \chi_{1 - \alpha}^2(k) \rangle = \langle 0, \chi_{1 - \alpha}^2((2 - 1)\cdot(3 - 1)) \rangle = \langle 0, \chi_{1 - \alpha}^2(2) \rangle \\
+                \overline{W}_{0.05} &= \langle 0, \chi_{0.95}^2(2) \rangle = \langle 0, 5.991 \rangle
+            \end{align*}
+
+            Jelikož $t \notin \overline{W}_{0.05}$, tak se $H_0$ \textbf{zamítá}. U větších měst, menších měst a obcí dle testu stejné procentuální zastoupení obyvatel, co preferují zimní čas, není.
+            
+        \end{result}
+        
+        \item U větších měst, menších měst a obcí (3 průzkumy) je stejné procentuální zastoupení nerozhodnutých obyvatel. \label{1e}
+
+        \begin{result}
+            Postupujeme analogicky jako v předcházejícím bodě \ref{1d}), pouze vyměníme \textit{zimní čas} za \textit{nemá názor}. Upravená výchozí tabulka k tomuto bodu tedy vypadá následovně:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c|c| }
+                    \hline
+                    & \textbf{větší města} & \textbf{menší města} & \textbf{obce} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{nemá názor} & 337 & 144 & 57 & \textbf{538} \\
+                    \hline
+                    \textbf{ostatní} & 1905 & 1124 & 618 & \textbf{3647} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{2242} & \textbf{1268} & \textbf{675} & \boldmath$n_{\bullet, \bullet} = 4185$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            $H_0$ a $H_A$ jsou opět stejné jako v předcházejícím bodě \ref{1d}, jen v jejich alternativním znění zaměníme \textit{zimní čas} za \textit{nemá názor}, tedy:
+            \begin{align*}
+                &H_0: p_{\textit{nemá názor}, \textit{větší města}} = p_{\textit{nemá názor}, \textit{menší města}} = p_{\textit{nemá názor}, \textit{obce}} \\
+                &H_A: \exists i, j: p_{\textit{nemá názor}, i} \neq p_{\textit{nemá názor}, j}, \text{kde } i,j \in \{\textit{větší města, menší města, obce}\}
+            \end{align*}
+
+            Pokračujeme opět výpočtem teoretických četností:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c| }
+                    \hline
+                    & \textbf{větší města} & \textbf{menší města} & \textbf{obce} \\
+                    \hline
+                    \textbf{nemá názor} & 288.2189 & 163.0069 & 86.7742 \\
+                    \hline
+                    \textbf{ostatní} & 1953.7811 & 1104.9931 & 588.2258 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Všechny teoretické četnosti splňují podmínku $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$, přejděme k výpočtu testovacího kritéria:
+            $$t = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 23.7406$$
+
+            Doplněk kritického oboru je pak stejný jako v bodě \ref{1d}), tedy:
+            $$\overline{W}_{0.05} = \langle 0, \chi_{0.95}^2(2) \rangle = \langle 0, 5.991 \rangle$$
+
+            Vidíme, že $t \notin \overline{W}_{0.05}$, a proto se $H_0$ \textbf{zamítá}. U větších měst, menších měst a obcí tedy dle testu stejné procentuální zastoupení nerozhodnutých obyvatel není.
+        \end{result}
+        
+        \item Na základě odpovědí z okolí studenta zkuste určit z dat, zda student prováděl výzkum ve větším městě, menším městě nebo v obci. Porovnejte výsledek se skutečností a okomentujte.
+
+        \begin{result}
+            V tomto bodě využijeme opět chí-kvadrát test homogenity (klasický chí-kvadrát test v kontingenčních tabulkách použitý ve všech předcházejících bodech). Jelikož tento test porovnává rozložení diskrétních veličin ve dvou či více populacích a testuje, zdali se napříč nimi tato rozložení neliší, můžeme proti sobě testovat po dvojicích vždy \textit{okolí studenta} a jednu z oblastí -- \textit{větší města}, \textit{menší města}, \textit{obce} -- a jako nejpodobnější pak určíme dvojici, jež dosáhne nejnižšího testovacího kritéria (to lze totiž chápat jako míru, jak moc se od sebe rozložení diskrétních veličin v populacích liší -- čím je jeho hodnota vyšší, tím více se liší i jednotlivá rozložení) tzn. vybereme dvojici, jež má nejpodobnější rozložení diskrétních veličin (naměřených hodnot/získaných odpovědí). Tímto způsobem odhadneme, kde byl s největší pravděpodobností prováděn výzkum (zdali rozložení odpovědí z \textit{okolí studenta} odpovídá nejvíce rozložení odpovědí ve \textit{větších městech}, \textit{menších městech} nebo \textit{obcích}), tedy jestli byl prováděn ve \textit{větším městě}, \textit{menším městě}, nebo \textit{obci}.
+
+            Začněme porovnáním \textit{okolí studenta} s \textit{většími městy}. Výchozí tabulka vypadá následovně:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c| }
+                    \hline
+                    & \textbf{okolí studenta} & \textbf{větší města} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{zimní čas} & 21 & 834 & \textbf{855} \\
+                    \hline
+                    \textbf{letní čas} & 25 & 636 & \textbf{661} \\
+                    \hline
+                    \textbf{střídání časů} & 8 & 435 & \textbf{443} \\
+                    \hline
+                    \textbf{nemá názor} & 17 & 337 & \textbf{354} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{71} & \textbf{2242} & \boldmath$n_{\bullet, \bullet} = 2313$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Vypočítané teoretické četnosti (opět dle vzorce $n_{i, j} \overset{\textit{odhad}}= \frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n}; \forall i,j$) jsou následující:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    & \textbf{okolí studenta} & \textbf{větší města} \\
+                    \hline
+                    \textbf{zimní čas} & 26.2451 & 828.7549 \\
+                    \hline
+                    \textbf{letní čas} & 20.2901 & 640.7099 \\
+                    \hline
+                    \textbf{střídání časů} & 13.5984 & 429.4016 \\
+                    \hline
+                    \textbf{nemá názor} & 10.8664 & 343.1336 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Všechny teoretické četnosti splňují podmínku $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$, vypočtěme tedy testovací kritérium:
+            $$t_{\textit{okolí studenta}, \textit{větší města}} = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 8.1589$$
+
+             Pokračujme porovnáním \textit{okolí studenta} s \textit{menšími městy}. Získáváme následující kontingenční tabulku:
+
+             \begin{center}
+                \begin{tabular}{ |l|c|c|c| }
+                    \hline
+                    & \textbf{okolí studenta} & \textbf{menší města} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{zimní čas} & 21 & 559 & \textbf{580} \\
+                    \hline
+                    \textbf{letní čas} & 25 & 363 & \textbf{388} \\
+                    \hline
+                    \textbf{střídání časů} & 8 & 202 & \textbf{210} \\
+                    \hline
+                    \textbf{nemá názor} & 17 & 144 & \textbf{161} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{71} & \textbf{1268} & \boldmath$n_{\bullet, \bullet} = 1339$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Dále spočtěme teoretické četnosti:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    & \textbf{okolí studenta} & \textbf{menší města} \\
+                    \hline
+                    \textbf{zimní čas} & 30.7543 & 549.2457 \\
+                    \hline
+                    \textbf{letní čas} & 20.5736 & 367.4264 \\
+                    \hline
+                    \textbf{střídání časů} & 11.1352 & 198.8648 \\
+                    \hline
+                    \textbf{nemá názor} & 8.5370 & 152.4630 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Podmínka $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$ je splněna. Přejděme tedy k výpočtu testovacího kritéria:
+            $$t_{\textit{okolí studenta}, \textit{menší města}} = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 14.0643$$
+
+            Nakonec porovnejme \textit{okolí studenta} s \textit{obcemi}. Pracujme tedy s následující tabulkou:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c|c| }
+                    \hline
+                    & \textbf{okolí studenta} & \textbf{obce} & \boldmath$n_{i, \bullet}$ \\
+                    \hline
+                    \textbf{zimní čas} & 21 & 300 & \textbf{321} \\
+                    \hline
+                    \textbf{letní čas} & 25 & 210 & \textbf{235} \\
+                    \hline
+                    \textbf{střídání časů} & 8 & 108 & \textbf{116} \\
+                    \hline
+                    \textbf{nemá názor} & 17 & 57 & \textbf{74} \\
+                    \hline
+                    \boldmath$n_{\bullet, j}$ & \textbf{71} & \textbf{675} & \boldmath$n_{\bullet, \bullet} = 746$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Opět spočtěme teoretické četnosti:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    & \textbf{okolí studenta} & \textbf{obce} \\
+                    \hline
+                    \textbf{zimní čas} & 30.5509 & 290.4491 \\
+                    \hline
+                    \textbf{letní čas} & 22.3660 & 212.6340 \\
+                    \hline
+                    \textbf{střídání časů} & 11.0402 & 104.9598 \\
+                    \hline
+                    \textbf{nemá názor} & 7.0429 & 66.9571 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Podmínka $\frac{n_{i, \bullet} \cdot n_{\bullet, j}}{n} > 5; \forall i,j$ opět platí. Vypočítejme tedy testovací kritérium:
+            $$t_{\textit{okolí studenta}, \textit{obce}} = n \sum_{i=1}^{r} \sum_{j=1}^{c} \frac{n_{i, j}^2}{n_{i, \bullet} \cdot n_{\bullet, j}} - n = 20.1259$$
+
+            Vidíme, že nejnižším testovacím kritériem je $t_{\textit{okolí studenta}, \textit{větší města}}$ a platí, že
+            $$t_{\textit{okolí studenta}, \textit{větší města}} < t_{\textit{okolí studenta}, \textit{menší města}} < t_{\textit{okolí studenta}, \textit{obce}}.$$
+            Naměřené hodnoty z \textit{okolí studenta} jsou tedy nejpodobnější hodnotám naměřeným ve \textit{větších městech} a nejméně podobné datům získaným v \textit{obcích}.
+            
+            Na základě odpovědí z \textit{okolí studenta} (mého okolí) bychom odhadovali, že průzkum byl prováděn v nějakém větším městě. Mnou dodané odpovědi však pochází z vesnice a jejího bližšího okolí (vedlejší vši/městysy). Tento nesoulad může být způsoben menším vstupním vzorkem a případně i složením respondentů, jimiž byli převážně lidé mladšího věku a~studenti, kteří se převážnou část dne právě v městech pohybují (pracují/studují). Vliv na výsledný odhad mohlo mít také větší zastoupení lidí bez názoru na předmět výzkumu v získaném vzorku. Dalším možným důvodem odchylky výsledného odhadu pak může být též nepoměr počtu respondentů z větších měst, menších měst a obcí (respondentů z~měst je zásadně více než respondentů z menších měst a i těch je stále skoro dvojnásobek oproti počtu respondentů z~obcí). Celkově by tedy mohl větší a vyrovnanější vzorek respondentů z jednotlivých oblastí vést k lepšímu a ucelenějšímu odrazu reality.
+        \end{result}
+    \end{enumerate}
+\end{task}
+
+
+
+
+
+\begin{task}
+    Data sestávají ze 70 realizací 3 náhodných veličin. První dva sloupce v tabulce (Excel -- Úkol 2 -- Data) obsahují vysvětlující proměnné X a Y (regresory -- pro všechny zadání stejné), třetí sloupec -- viz. číslo zadání -- udává hodnoty závislé (vysvětlované) proměnné Z. Testy provádějte na hladině významnosti 0,05\,\%, intervalové odhady vypočítejte se spolehlivosti 95\,\%. Pro zpřehlednění textu označte jednotlivé kroky.
+
+    Při řešení vycházíme převážně ze vzorců a principů představených v přednášce MSP -- 07 -- Regresní analýza, Vzorce pro výpočty jednotlivých veličin a jejich hodnot jsou tedy dostupné v tomto zdroji a dále zde tedy z důvodu jejich většího počtu a~komplexnosti uváděny nebudou. Výpočty jsou pak prováděny v přiloženém jupyter notebooku převážně pomocí dostupných knihovních funkcí. 
+
+    \begin{enumerate}[a)]
+        \item Určete vhodný model pomocí zpětné metody a regresní diagnostiky. V úvahu vezměte model polynomiální – kvadratický (v obou proměnných). Vycházejte tedy z regresní funkce:
+        $$Z = \beta_1 + \beta_2X + \beta_3 Y + \beta_4 X^2 + \beta_5 Y^2 + \beta_6 X \cdot Y$$
+        až po $Z = \beta_1$.
+        Vhodnost nalezených modelů porovnejte pomocí koeficientu determinace $R^2$. Možnost zjednodušení jednoho modelu na jeho submodel (model získaný vynecháním některého sloupce matice plánu) ověřte pomocí vhodného testu nulovosti regresních parametrů.
+
+        \begin{result}
+            Nejprve spočítáme koeficient determinace ($R^2_1$) přímo pro výchozí podobu regresní funkce. Získáváme hodnotu
+            $$R^2_1 = 0.995.$$
+            Následně spočítáme bodové odhady regresních koeficientů a u každého vypočítáme \textit{p-hodnotu} testu na nulovost, která nám pomůže určit, které koeficienty můžeme případně vynechat (nemají na hodnotu koeficientu determinace téměř žádný vliv). U~testů jednotlivých koeficientů $\beta_j$, kde $j \in \{1, 2, 3, 4, 5, 6\}$, na nulovost předpokládáme následující hypotézy:
+            \begin{align*}
+                &H_0: \beta_j = 0 \\
+                &H_A: \beta_j \neq 0
+            \end{align*}
+            Uveďme si nyní odhady jednotlivých regresních koeficientů včetně jejich \textit{p-hodnot} v následující tabulce:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    \textbf{koeficient} & \textbf{bodový odhad} & \textbf{p-hodnota} \\
+                    \hline
+                    \boldmath$\beta_1$ & 68.9179 & 0.005 \\
+                    \hline
+                    \boldmath$\beta_2$ & -4.4562 & 0.238 \\
+                    \hline
+                    \boldmath$\beta_3$ & -14.6426 & 0.042 \\
+                    \hline
+                    \boldmath$\beta_4$ & -2.9886 & 0.000 \\
+                    \hline
+                    \boldmath$\beta_5$ & -3.6310 & 0.000 \\
+                    \hline
+                    \boldmath$\beta_6$ & -4.5350 & 0.000 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Zde vidíme, že nejvyšší \textit{p-hodnoty} nabývá koeficient $\beta_2$ (má tedy nejvyšší pravděpodobnost, že nemá vliv na závislou proměnnou $Z$ -- konkrétně 23.8\,\%) a zásadně převyšuje i zadanou hladinu významnosti. Při jeho odstranění pak dostáváme koeficient determinace $R^2_2$, jež je shodný s $R^2_1$, tedy $R^2_2 = R^2_1 = 0.995$. Výsledná regresní funkce pak vypadá následovně:
+            $$Z = \beta_1 + \beta_3 Y + \beta_4 X^2 + \beta_5 Y^2 + \beta_6 X \cdot Y$$                  
+            Opět i pro tento model spočteme bodové odhady hodnot koeficientů a \textit{p-hodnoty}:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    \textbf{koeficient} & \textbf{bodový odhad} & \textbf{p-hodnota} \\
+                    \hline
+                    \boldmath$\beta_1$ & 49.3070 & 0.006 \\
+                    \hline
+                    \boldmath$\beta_3$ & -13.3819 & 0.060 \\
+                    \hline
+                    \boldmath$\beta_4$ & -3.1659 & 0.000 \\
+                    \hline
+                    \boldmath$\beta_5$ & -3.6310 & 0.000 \\
+                    \hline
+                    \boldmath$\beta_6$ & -4.6610 & 0.000 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Zde vidíme, že dalším odebraným koeficientem by mohl být koeficient $\beta_3$ (jeho \textit{p-hodnota} je vyšší než $\alpha$ -- hladina významnosti), při jeho odebrání se však koeficient determinace lehce sníží ($R^2_3 = 0.994 < R^2_2 = 0.995$). To je však zanedbatelná cena za zjednodušení modelu, které může zvýšit jeho odolnost proti přetrénování, a proto dále pokračujme s funkcí:
+            $$Z = \beta_1 + \beta_4 X^2 + \beta_5 Y^2 + \beta_6 X \cdot Y$$
+            Nyní opět spočtěme bodové odhady hodnot koeficientů a \textit{p-hodnot}:
+
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    \textbf{koeficient} & \textbf{bodový odhad} & \textbf{p-hodnota} \\
+                    \hline
+                    \boldmath$\beta_1$ & 24.0281 & 0.043 \\
+                    \hline
+                    \boldmath$\beta_4$ & -3.1227 & 0.000 \\
+                    \hline
+                    \boldmath$\beta_5$ & -4.6939 & 0.000 \\
+                    \hline
+                    \boldmath$\beta_6$ & -4.8477 & 0.000 \\
+                    \hline
+                \end{tabular}
+            \end{center}
+            
+            Vidíme, že koeficient $\beta_1$ nemá nulovou \textit{p-hodnotu} (zde záleží, jak si vyložíme hladinu významnosti ze zadání, pokud jako $\alpha = 0.05$, tak je \textit{p-hodnota} menší -- ignorujeme znak \% -- jinak můžeme chápat $\alpha$ jako 0.0005, a potom je \textit{p-hodnota} větší), a když jej odděláme, tak se i zvýší hodnota koeficientu determinace na $0.998$. Tohle však vynutí průchod modelu počátkem soustavy souřadnic (bod $[0, 0, 0]$), což může vést k jeho celkovému zkreslení a ke snížení úspěšnosti jeho odhadů pro neznámé hodnoty. Výjimkou může být situace, kdy je konstanta již dle odhadu parametrů téměř rovna nule (a pokud to s velkou jistotou prokáže test na nulovost). To však není náš případ, a tedy koeficient (konstantu) $\beta_1$ ponecháme. Odebrání ostatních koeficientů pak již vždy vyústí ve výraznější pokles koeficientu determinace a i jejich \textit{p-hodnoty} jsou téměř nulové. Proto jsou tyto parametry ponechány.
+        \end{result}
+        
+        \item Pro takto získaný model (dostatečný submodel) uveďte v jedné tabulce odhady regresních parametrů metodou nejmen\-ších čtverců a jejich 95\,\% intervaly spolehlivosti.
+
+        \begin{result}
+            Následující tabulka shrnuje bodové odhady regresních parametrů a jejich 95\,\% intervaly spolehlivosti:
+            \begin{center}
+                \begin{tabular}{ |l|c|c| }
+                    \hline
+                    \textbf{koeficient} & \textbf{bodový odhad} & \textbf{95\,\% interval spolehlivosti} \\
+                    \hline
+                    \boldmath$\beta_1$ & 24.0281 & $\langle 0.741, 47.315 \rangle$ \\
+                    \hline
+                    \boldmath$\beta_4$ & -3.1227 & $\langle -3.270, -2.976 \rangle$ \\
+                    \hline
+                    \boldmath$\beta_5$ & -4.6939 & $\langle -5.270, -4.117 \rangle$ \\
+                    \hline
+                    \boldmath$\beta_6$ & -4.8477 & $\langle -5.342, -4.354 \rangle$ \\
+                    \hline
+                \end{tabular}
+            \end{center}
+
+            Vzorce pro výpočet intervalů viz přednáška MSP -- 07 -- Regresní analýza -- sekce Intervalové odhady a~testování hypotéz.
+        \end{result}
+        
+        \item Nestranně odhadněte rozptyl závisle proměnné.
+
+        \begin{result}
+            K výpočtu můžeme opět využít vzorec ze sedmé přednášky -- sekce Bodové odhady. Výsledný rozptyl závislé proměnné je
+            $$D(Z_i) = \sigma^2 = 2627.1949.$$
+        \end{result}
+        
+        \item Vhodným testem zjistěte, že vámi zvolené dva regresní parametry jsou současně nulové.
+
+        \begin{result}
+            Pracujeme s naším submodelem a zvolíme například koeficienty $\beta_1$ a $\beta_4$. Uvažujeme následující sdružené hypotézy:
+            \begin{align*}
+                &H_0: (\beta_1, \beta_4) = (0, 0) \\
+                &H_A: (\beta_1, \beta_4) \neq (0, 0)
+            \end{align*}
+            Jelikož testujeme sdružené hypotézy, tak použijeme \verb|f-test|. Testovací kritérium zde tedy vychází z Fisher-Snedecorova rozdělení. Získaná \textit{p-hodnota} je pak téměř nulová (2.38e-54), je tedy dozajista menší než naše uvažovaná hladina významnosti, a proto $H_0$ \textbf{zamítáme}. Dle testu tedy platí $H_A: (\beta_1, \beta_4) \neq (0, 0)$.
+        \end{result}
+        
+        \item Vhodným testem zjistěte, že vámi zvolené dva regresní parametry jsou stejné.
+
+        \begin{result}
+            Opět pracujme s naším submodelem, tentokrát však zvolme koeficienty $\beta_5$ a $\beta_6$. Uvažovanými hypotézami v~tomto případě jsou:
+            \begin{align*}
+                &H_0: \beta_5 = \beta_6 \\
+                &H_A: \beta_5 \neq \beta_6
+            \end{align*}
+            V tomto případě můžeme k výpočtu použít \verb|t-test| (nepracujeme se sdruženou hypotézou), kde testovací kritérium vychází ze Studentova rozdělení. Výsledná \textit{p-hodnota} je $0.763$ (pozn. stejnou dostaneme i za použití \verb|f-testu|). Jelikož je pak získaná \textit{p-hodnota} větší než hladina významnosti $\alpha$ pro tento úkol, tak $H_0$ \textbf{nezamítáme}.
+        \end{result}
+    \end{enumerate}
+\end{task}
+
+\end{document}
